@@ -1,0 +1,9 @@
+<form [formGroup]="form">
+  <label for="name">Nombre</label>
+  <input type="text" id="name" [contentEditable]="editable" formControlName="name">
+  <label for="surname">Apellidos</label>
+  <input type="text" id="surname" [contentEditable]="editable" formControlName="surname">
+  <label for="atGraduation">Fecha de graduacion</label>
+  <input type="text" id="atGraduation" [contentEditable]="editable" formControlName="atGraduation">
+  <button (click)="submit()">Enviar</button>
+</form>

@@ -7,7 +7,7 @@ export abstract class IndexedDbService<K, V> extends Dexie {
     databaseName: string,
     version: number,
     storageName: string,
-    indexes: string,
+    indexes: string
   ) {
     super(databaseName);
 
@@ -46,5 +46,13 @@ export abstract class IndexedDbService<K, V> extends Dexie {
 
   public update(id: K, value: V): Promise<number> {
     return this.storage.update(id, value);
+  }
+
+  public deleteAll() {
+    return this.storage.clear();
+  }
+
+  public bulkDelete(ids: K[]) {
+    return this.storage.bulkDelete(ids);
   }
 }

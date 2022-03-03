@@ -1,1 +1,23 @@
-<p>soldier works!</p>
+<table>
+  <thead>
+  <tr>
+    <th>id</th>
+    <th>name</th>
+    <th>surname</th>
+    <th>atGraduation</th>
+    <th>Acciones</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let soldier of soldiers$| async ">
+    <td>{{soldier.id}}</td>
+    <td>{{soldier.name}}</td>
+    <td>{{soldier.surname}}</td>
+    <td>{{soldier.atGraduation}}</td>
+    <td>
+
+      <span routerLink="/soldiers/new">Nuevo</span>
+    </td>
+  </tr>
+  </tbody>
+</table>
