@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ListSoldierComponent } from './list-soldier.component';
 
 const routes: Routes = [
   {
     path: '',
-    loadChildren: () =>
-      import('./pages/pages.module').then((m) => m.PagesModule),
+    component: ListSoldierComponent,
   },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class ListSoldierRoutingModule {}

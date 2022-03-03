@@ -1,0 +1,22 @@
+<form [formGroup]="form" class="animate__animated animate__fadeIn">
+    <mat-form-field appearance="fill" *ngFor="let field of this.formFields">
+        <mat-label>{{ field.name }}</mat-label>
+        <input
+            [formControlName]="field.id"
+            matInput
+            [type]="field.type"
+            [readonly]="!field.isEditable"
+        />
+        <button
+            matSuffix
+            mat-icon-button
+            aria-label="Clear"
+            *ngIf="form.get(field.id)?.value !== '' && isEditable"
+            (click)="form.get(field.name)?.setValue('')"
+        >
+            <mat-icon>close</mat-icon>
+        </button>
+    </mat-form-field>
+    <button mat-raised-button color="accept" (click)="send()">Aceptar</button>
+    <button mat-raised-button color="warn" (click)="cancel()">Cancelar</button>
+</form>
