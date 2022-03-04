@@ -117,7 +117,7 @@ export class SoldierRepository {
   private addSoldierCreationIntoQueue(soldier: Soldier) {
     return () => {
       this.highAvailabilityService.addToQueue(
-        HighAvailabilityService.CREATE_QUEUE,
+        environment.QUEUES.CREATE,
         soldier
       );
     };
