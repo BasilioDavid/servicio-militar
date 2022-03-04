@@ -2,7 +2,8 @@ import { IndexedDbService } from '../../../common/services/indexed-db-cache/inde
 import { Soldier } from '../../soldier.interface';
 
 export class DeleteQueueStorage extends IndexedDbService<string, Soldier> {
+  // solucion rapida
   public constructor() {
-    super('MilitaryService', 1, 'delete-queue', 'id');
+    super('MilitaryServiceDeleteQueue', 1, 'delete-queue', 'id');
   }
 }

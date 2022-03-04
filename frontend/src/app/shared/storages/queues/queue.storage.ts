@@ -1,10 +1,9 @@
-import { IndexedDbService } from '../../../common/services/indexed-db-cache/indexed-db.service';
-import { Soldier } from '../../soldier.interface';
 import { UpdateQueueStorage } from './update-queue.storage';
 import { CreateQueueStorage } from './create-queue.storage';
 import { DeleteQueueStorage } from './delete-queue.storage';
-import { environment } from '../../../../environments/environment';
+import { Injectable } from '@angular/core';
 
+@Injectable()
 export class QueueStorage {
   public constructor(
     public readonly CREATE: CreateQueueStorage,

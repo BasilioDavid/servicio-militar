@@ -1,19 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { v4 as uuidv4 } from 'uuid';
 import { Router } from '@angular/router';
 import { SoldierRepository } from '../../../shared/repositories/soldier.repository';
-import { Soldier } from '../../../shared/soldier.interface';
 import { HighAvailabilityService } from '../../../shared/high-availability.service';
 import { environment } from '../../../../environments/environment';
+import { Soldier } from '../../../shared/soldier.interface';
 
 @Component({
-  selector: 'app-new-soldiers',
+  selector: 'app-delete-soldiers',
   template: ` <app-form-soldiers
     [editable]="true"
     (onSubmit)="this.submit($event)"
   ></app-form-soldiers>`,
 })
-export class NewSoldierComponent implements OnInit {
+export class DeleteSoldierComponent implements OnInit {
   constructor(
     private readonly soldierRepository: SoldierRepository,
     private readonly highAvailabilityService: HighAvailabilityService,
@@ -23,14 +22,14 @@ export class NewSoldierComponent implements OnInit {
   ngOnInit(): void {}
 
   public submit(values: any) {
-    const soldier: Soldier = { ...values, id: uuidv4() };
-    const addToCreateQueue = () => {
+    const soldier: Soldier = { ...values };
+    const addToDeleteQueue = () => {
       this.highAvailabilityService.addToQueue(
-        environment.QUEUES.CREATE,
+        environment.QUEUES.DELETE,
         soldier
       );
     };
-    this.soldierRepository.create(soldier, addToCreateQueue);
+    this.soldierRepository.delete(values, addToDeleteQueue);
     this.router.navigate(['/soldiers/list']);
   }
 }

@@ -1,9 +1,7 @@
-import { v4 as uuidv4 } from 'uuid';
 import { environment } from '../../../environments/environment';
 import { FetchDataService } from '../../common/modules/fetch-data/fetch-data.service';
 import { SoldierStorage } from '../storages/soldier.storage';
 import { Soldier } from '../soldier.interface';
-import { HighAvailabilityService } from '../high-availability.service';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { mapArrayIntoMap } from '../../common/helpers/bdgf.helpers';
@@ -20,8 +18,7 @@ export class SoldierRepository {
 
   constructor(
     private readonly fetchDataService: FetchDataService,
-    private readonly soldierStorage: SoldierStorage,
-    private readonly highAvailabilityService: HighAvailabilityService
+    private readonly soldierStorage: SoldierStorage
   ) {
     this.reload();
   }
@@ -62,22 +59,13 @@ export class SoldierRepository {
 
   //TODO: ver si puedo eliminar el soldier en todos los metodos con un atributo de clase
   // o algo así
-  public async create(values: any) {
-    const soldier: Soldier = { ...values, id: uuidv4() };
+  public async create(soldier: Soldier, onErrorCB: (soldier: Soldier) => void) {
     this.soldiers = { ...this.soldiers, [soldier.id]: { ...soldier } };
-    try {
-      await this.saveValuesInIndexedDB(soldier);
-    } catch (e) {
-      // second try
-      console.warn('Duplicated id???');
-      delete this.soldiers[soldier.id];
-      soldier.id = uuidv4();
-      this.soldiers = { ...this.soldiers, [soldier.id]: { ...soldier } };
-      await this.saveValuesInIndexedDB(soldier);
-    }
+    this.sendSoldiers();
+    await this.saveValuesInIndexedDB(soldier);
     this.sendSoldierToBackend(soldier).subscribe(
       this.handleBackendResponse(soldier),
-      this.addSoldierCreationIntoQueue(soldier)
+      onErrorCB
     );
   }
 
@@ -94,7 +82,6 @@ export class SoldierRepository {
 
   private handleBackendResponse(soldier: Soldier) {
     return (response: string) => {
-      if (response === '201') return;
       if (response === '409') this.rollback(soldier);
     };
   }
@@ -104,12 +91,34 @@ export class SoldierRepository {
     // TODO: enviar una notificacion que el soldado no se ha podido añadir por algun motivo
   }
 
-  private addSoldierCreationIntoQueue(soldier: Soldier) {
-    return () => {
-      this.highAvailabilityService.addToQueue(
-        environment.QUEUES.CREATE,
-        soldier
-      );
+  public async delete(id: string, onErrorCB: (soldier: Soldier) => void) {
+    const soldier2Delete = { ...this.soldiers[id] };
+    delete this.soldiers[id];
+    await this.deleteFromIndexedDB(id);
+    this.deleteFromBackend(id).subscribe(
+      this.handleBackendResponseOnDelete(soldier2Delete),
+      onErrorCB
+    );
+  }
+
+  private deleteFromIndexedDB(id: string) {
+    return this.soldierStorage.deleteOne(id);
+  }
+
+  private deleteFromBackend(id: string) {
+    return this.fetchDataService.delete<string>(
+      environment.SOLDIERS_ENDPOINT + '/' + id
+    );
+  }
+
+  private handleBackendResponseOnDelete(soldier: Soldier) {
+    return (response: string) => {
+      if (response !== '402') this.rollbackOnDelete(soldier);
     };
+  }
+
+  private rollbackOnDelete(soldier: Soldier) {
+    this.soldiers[soldier.id] = soldier;
+    // TODO: enviar una notificacion que el soldado no se ha podido añadir por algun motivo
   }
 }

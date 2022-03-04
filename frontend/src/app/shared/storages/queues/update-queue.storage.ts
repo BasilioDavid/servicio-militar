@@ -2,7 +2,8 @@ import { IndexedDbService } from '../../../common/services/indexed-db-cache/inde
 import { Soldier } from '../../soldier.interface';
 
 export class UpdateQueueStorage extends IndexedDbService<string, Soldier> {
+  // solucion rapida
   public constructor() {
-    super('MilitaryService', 1, 'update-queue', 'id');
+    super('MilitaryServiceUpdateQueue', 1, 'update-queue', 'id');
   }
 }

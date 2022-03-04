@@ -21,4 +21,25 @@ export class SoldiersController {
     soldierEntity.fromDTO(soldier);
     return this.soldierService.new(soldierEntity);
   }
+
+  @Post('mass')
+  private mass(@Body() soldiers: { [queue: string]: SoldierDTO[] }) {
+    // cambiar ese string a pelocho a un environ
+    let soldiers2Create: SoldierEntity[] = [];
+    for (const soldier of soldiers['create']) {
+      const soldierEntity = new SoldierEntity();
+      soldierEntity.fromDTO(soldier);
+      soldiers2Create = [...soldiers2Create, soldierEntity];
+    }
+    let soldiers2Update: SoldierEntity[] = [];
+    for (const soldier of soldiers['update']) {
+      const soldierEntity = new SoldierEntity();
+      soldierEntity.fromDTO(soldier);
+      soldiers2Update = [...soldiers2Update, soldierEntity];
+    }
+    let soldiers2Delete: string[] = [];
+    for (const { id } of soldiers['delete']) {
+      soldiers2Delete = [...soldiers2Delete, id];
+    }
+  }
 }

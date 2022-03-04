@@ -6,10 +6,24 @@ import { FetchDataModule } from '../../../common/modules/fetch-data/fetch-data.m
 import { HighAvailabilityService } from '../../../shared/high-availability.service';
 import { SoldierRepository } from '../../../shared/repositories/soldier.repository';
 import { SoldierStorage } from '../../../shared/storages/soldier.storage';
+import { QueueRepository } from '../../../shared/repositories/queue.repository';
+import { QueueStorage } from '../../../shared/storages/queues/queue.storage';
+import { CreateQueueStorage } from '../../../shared/storages/queues/create-queue.storage';
+import { DeleteQueueStorage } from '../../../shared/storages/queues/delete-queue.storage';
+import { UpdateQueueStorage } from '../../../shared/storages/queues/update-queue.storage';
 
 @NgModule({
   declarations: [ListSoldierComponent],
   imports: [ListSoldierRoutingModule, CommonModule, FetchDataModule],
-  providers: [HighAvailabilityService, SoldierRepository, SoldierStorage],
+  providers: [
+    HighAvailabilityService,
+    SoldierRepository,
+    SoldierStorage,
+    QueueRepository,
+    QueueStorage,
+    CreateQueueStorage,
+    DeleteQueueStorage,
+    UpdateQueueStorage,
+  ],
 })
 export class ListSoldierModule {}

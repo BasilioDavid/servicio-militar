@@ -1,18 +1,16 @@
-import { environment } from '../../../environments/environment';
-import { FetchDataService } from '../../common/modules/fetch-data/fetch-data.service';
-import { Injectable } from '@angular/core';
-import { mapArrayIntoMap } from '../../common/helpers/bdgf.helpers';
-import { QueueStorage } from '../storages/queues/queue.storage';
-import { SoldierRepository } from './soldier.repository';
+import {environment} from '../../../environments/environment';
+import {FetchDataService} from '../../common/modules/fetch-data/fetch-data.service';
+import {Injectable} from '@angular/core';
+import {QueueStorage} from '../storages/queues/queue.storage';
 
 @Injectable()
 export class QueueRepository {
   private queues!: { [queue: string]: any[] };
+  private prevQueues!: { [queue: string]: any[] };
 
   constructor(
     private readonly fetchDataService: FetchDataService,
-    private readonly queueStorage: QueueStorage,
-    private readonly soldierRepository: SoldierRepository
+    private readonly queueStorage: QueueStorage
   ) {
     this.read();
   }
@@ -35,7 +33,7 @@ export class QueueRepository {
   }
 
   private saveValuesInIndexedDB(queue: string, value: any) {
-    const valueToSave = { ...value, queue };
+    const valueToSave = {...value, queue};
     switch (queue) {
       case environment.QUEUES.CREATE:
         this.queueStorage.CREATE.put(valueToSave);
@@ -49,13 +47,10 @@ export class QueueRepository {
   }
 
   public send() {
-    const values2Send = { ...this.queues };
+    this.prevQueues = {...this.queues};
     this.queues = {};
     this.clearIndexedDB();
-    this.sendToBackend(values2Send).subscribe(
-      this.handleBackendResponse,
-      this.handleBackendError(values2Send)
-    );
+    return this.sendToBackend(this.prevQueues);
   }
 
   private clearIndexedDB() {
@@ -65,26 +60,16 @@ export class QueueRepository {
   }
 
   private sendToBackend(values: { [queue: string]: any[] }) {
-    return this.fetchDataService.post<string[]>(
+    return this.fetchDataService.post<string>(
       environment.MASS_ENDPOINT,
       values
     );
   }
 
-  private handleBackendResponse(idsFailed: string[]) {
-    if (idsFailed.length) {
-      this.soldierRepository.reload();
-    }
-  }
-
-  private handleBackendError(oldValues: { [queue: string]: any[] }) {
-    return () => {
-      console.error('No se ha podido sincronizar la pila');
-      console.error('Haciendo rollback');
-      //TODO: habría que emitir algo
-      this.queues = { ...this.queues, ...oldValues };
-      this.restoreIndexedDB(oldValues);
-    };
+  public rollback() {
+    console.warn("no se ha podido subir los datos al backend")
+    this.queues = {...this.queues, ...this.prevQueues}
+    this.restoreIndexedDB(this.prevQueues);
   }
 
   private restoreIndexedDB(oldValues: { [queue: string]: any[] }) {

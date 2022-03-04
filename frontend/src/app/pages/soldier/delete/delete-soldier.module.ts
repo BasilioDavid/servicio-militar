@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NewSoldierComponent } from './new-soldier.component';
-import { NewSoldierRoutingModule } from './new-soldier-routing.module';
+import { DeleteSoldierComponent } from './delete-soldier.component';
+import { DeleteSoldierRoutingModule } from './delete-soldier-routing.module';
 import { FetchDataService } from '../../../common/modules/fetch-data/fetch-data.service';
 import { FetchDataModule } from '../../../common/modules/fetch-data/fetch-data.module';
 import { FormSoldierModule } from '../form/form-soldier.module';
@@ -15,17 +15,17 @@ import { DeleteQueueStorage } from '../../../shared/storages/queues/delete-queue
 import { UpdateQueueStorage } from '../../../shared/storages/queues/update-queue.storage';
 
 @NgModule({
-  declarations: [NewSoldierComponent],
-  imports: [NewSoldierRoutingModule, FormSoldierModule, FetchDataModule],
+  declarations: [DeleteSoldierComponent],
+  imports: [DeleteSoldierRoutingModule, FormSoldierModule, FetchDataModule],
   providers: [
     SoldierStorage,
     SoldierRepository,
     HighAvailabilityService,
-    QueueRepository,
-    QueueStorage,
-    CreateQueueStorage,
-    DeleteQueueStorage,
-    UpdateQueueStorage,
+    // QueueRepository,
+    // QueueStorage,
+    // CreateQueueStorage,
+    // DeleteQueueStorage,
+    // UpdateQueueStorage,
   ],
 })
-export class NewSoldierModule {}
+export class DeleteSoldierModule {}

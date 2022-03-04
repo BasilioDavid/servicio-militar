@@ -13,6 +13,20 @@ const routes: Routes = [
       import('./new/new-soldier.module').then((m) => m.NewSoldierModule),
   },
   {
+    path: 'update',
+    loadChildren: () =>
+      import('./update/update-soldier.module').then(
+        (m) => m.UpdateSoldierModule
+      ),
+  },
+  {
+    path: 'delete',
+    loadChildren: () =>
+      import('./delete/delete-soldier.module').then(
+        (m) => m.DeleteSoldierModule
+      ),
+  },
+  {
     path: '',
     loadChildren: () =>
       import('./list/list-soldier.module').then((m) => m.ListSoldierModule),
