@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SoldierRepository } from '../../../shared/soldier.repository';
+import { SoldierRepository } from '../../../shared/repositories/soldier.repository';
 
 @Component({
   selector: 'app-soldiers',

@@ -4,8 +4,8 @@ import { ListSoldierComponent } from './list-soldier.component';
 import { ListSoldierRoutingModule } from './list-soldier-routing.module';
 import { FetchDataModule } from '../../../common/modules/fetch-data/fetch-data.module';
 import { HighAvailabilityService } from '../../../shared/high-availability.service';
-import { SoldierRepository } from '../../../shared/soldier.repository';
-import { SoldierStorage } from '../../../shared/soldier.storage';
+import { SoldierRepository } from '../../../shared/repositories/soldier.repository';
+import { SoldierStorage } from '../../../shared/storages/soldier.storage';
 
 @NgModule({
   declarations: [ListSoldierComponent],

@@ -1,9 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
-import { environment } from '../../environments/environment';
-import { FetchDataService } from '../common/modules/fetch-data/fetch-data.service';
-import { SoldierStorage } from './soldier.storage';
-import { Soldier } from './soldier.interface';
-import { HighAvailabilityService } from './high-availability.service';
+import { environment } from '../../../environments/environment';
+import { FetchDataService } from '../../common/modules/fetch-data/fetch-data.service';
+import { SoldierStorage } from '../storages/soldier.storage';
+import { Soldier } from '../soldier.interface';
+import { HighAvailabilityService } from '../high-availability.service';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
@@ -22,30 +22,18 @@ export class SoldierRepository {
     private readonly soldierStorage: SoldierStorage,
     private readonly highAvailabilityService: HighAvailabilityService
   ) {
-    this.read();
+    this.reload();
   }
 
-  private async read() {
+  public async reload() {
     this.soldiers = this.mapArrayIntoMap(await this.getValuesFromIndexedDB());
     this.sendSoldiers();
-    this.requestSoldiersToBackend().subscribe((soldiers) =>
-      this.manageBackendValues(soldiers)
+    this.requestSoldiersToBackend().subscribe(
+      (soldiers) => this.manageBackendValues(soldiers),
+      () => {
+        console.error('no se ha podido comunicar con el backend');
+      }
     );
-  }
-
-  private sendSoldiers() {
-    this._soldiers$.next(this.getSoldiersArray());
-  }
-
-  private getSoldiersArray() {
-    return Object.values(this.soldiers);
-  }
-
-  private manageBackendValues(soldiers: Soldier[]) {
-    this.soldiers = this.mapArrayIntoMap(soldiers);
-    this.sendSoldiers();
-    this.soldierStorage.deleteAll();
-    this.soldierStorage.bulkAdd(this.getSoldiersArray());
   }
 
   // Esto es tan generico que tendría que sacarlo a una funcion helper
@@ -61,6 +49,21 @@ export class SoldierRepository {
 
   private getValuesFromIndexedDB() {
     return this.soldierStorage.findAll();
+  }
+
+  private sendSoldiers() {
+    this._soldiers$.next(this.getSoldiersArray());
+  }
+
+  private getSoldiersArray() {
+    return Object.values(this.soldiers);
+  }
+
+  private manageBackendValues(soldiers: Soldier[]) {
+    this.soldiers = this.mapArrayIntoMap(soldiers);
+    this.sendSoldiers();
+    this.soldierStorage.deleteAll();
+    this.soldierStorage.bulkAdd(this.getSoldiersArray());
   }
 
   private requestSoldiersToBackend() {

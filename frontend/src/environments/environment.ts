@@ -5,8 +5,12 @@
 export const environment = {
   production: false,
   SOLDIERS_ENDPOINT: 'http://localhost:3000/soldiers',
-  MASS_ENDPOINT: "http://localhost:300/mass"
-
+  MASS_ENDPOINT: 'http://localhost:300/mass',
+  QUEUES: {
+    CREATE: 'create',
+    UPDATE: 'update',
+    DELETE: 'delete',
+  },
 };
 
 /*
