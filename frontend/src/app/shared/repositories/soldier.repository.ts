@@ -6,6 +6,7 @@ import { Soldier } from '../soldier.interface';
 import { HighAvailabilityService } from '../high-availability.service';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { mapArrayIntoMap } from '../../common/helpers/bdgf.helpers';
 
 @Injectable()
 export class SoldierRepository {
@@ -26,24 +27,13 @@ export class SoldierRepository {
   }
 
   public async reload() {
-    this.soldiers = this.mapArrayIntoMap(await this.getValuesFromIndexedDB());
+    this.soldiers = mapArrayIntoMap(await this.getValuesFromIndexedDB());
     this.sendSoldiers();
     this.requestSoldiersToBackend().subscribe(
       (soldiers) => this.manageBackendValues(soldiers),
       () => {
         console.error('no se ha podido comunicar con el backend');
       }
-    );
-  }
-
-  // Esto es tan generico que tendría que sacarlo a una funcion helper
-  private mapArrayIntoMap(values: { id: string }[]) {
-    return values.reduce(
-      (acc, soldier) => ({
-        ...acc,
-        [soldier.id]: soldier,
-      }),
-      {}
     );
   }
 
@@ -60,7 +50,7 @@ export class SoldierRepository {
   }
 
   private manageBackendValues(soldiers: Soldier[]) {
-    this.soldiers = this.mapArrayIntoMap(soldiers);
+    this.soldiers = mapArrayIntoMap(soldiers);
     this.sendSoldiers();
     this.soldierStorage.deleteAll();
     this.soldierStorage.bulkAdd(this.getSoldiersArray());
