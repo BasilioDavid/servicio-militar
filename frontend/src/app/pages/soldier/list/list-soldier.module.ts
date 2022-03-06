@@ -15,12 +15,7 @@ import { SoldierServicesModule } from '../../../shared/modules/soldier/soldier-s
 
 @NgModule({
   declarations: [ListSoldierComponent],
-  imports: [
-    ListSoldierRoutingModule,
-    CommonModule,
-    FetchDataModule,
-    // SoldierServicesModule,
-  ],
+  imports: [ListSoldierRoutingModule, CommonModule, FetchDataModule],
   providers: [
     HighAvailabilityService,
     QueueRepository,

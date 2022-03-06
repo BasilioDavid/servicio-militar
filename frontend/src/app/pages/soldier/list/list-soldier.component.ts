@@ -6,7 +6,6 @@ import {
 } from '@angular/core';
 import { SoldierRepository } from '../../../shared/modules/soldier/soldier.repository';
 import { HighAvailabilityService } from '../../../shared/high-availability.service';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-list-soldiers',
@@ -25,9 +24,6 @@ export class ListSoldierComponent implements OnInit, AfterContentChecked {
   ngOnInit() {
     this.highAvailabilityService.setOnBackedRefreshCallback(() => {
       this.refresh();
-    });
-    this.soldierRepository.soldiers$.subscribe((d) => {
-      console.log(d);
     });
   }
 

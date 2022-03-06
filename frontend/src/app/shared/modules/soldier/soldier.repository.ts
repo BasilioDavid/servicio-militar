@@ -3,7 +3,7 @@ import { FetchDataService } from '../../../common/modules/fetch-data/fetch-data.
 import { SoldierStorage } from './soldier.storage';
 import { Soldier } from './soldier.interface';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { mapArrayIntoMap } from '../../../common/helpers/bdgf.helpers';
 
 @Injectable()
@@ -43,7 +43,6 @@ export class SoldierRepository {
   }
 
   private getSoldiersArray() {
-    console.log('este', this.soldiers);
     return Object.values({ ...this.soldiers });
   }
 
@@ -60,70 +59,67 @@ export class SoldierRepository {
 
   public async create(soldier: Soldier, onErrorCB: (soldier: Soldier) => void) {
     this.soldiers[soldier.id] = { ...soldier };
-    // this.soldiers = { ...this.soldiers, [soldier.id]: { ...soldier } };
-    // this.soldiers = { a: soldier };
     this.sendSoldiers();
-    // await this.saveValuesInIndexedDB(soldier);
-    // this.sendSoldierToBackend(soldier).subscribe(
-    //   this.handleBackendResponse(soldier),
-    //   onErrorCB
-    // );
+    await this.saveValuesInIndexedDB(soldier);
+    this.sendSoldierToBackend(soldier).subscribe(
+      this.handleBackendResponse(soldier),
+      onErrorCB
+    );
   }
 
-  // private saveValuesInIndexedDB(soldier: Soldier) {
-  //   return this.soldierStorage.add(soldier);
-  // }
-  //
-  // private sendSoldierToBackend(soldier: Soldier) {
-  //   return this.fetchDataService.post<string>(
-  //     environment.SOLDIERS_ENDPOINT,
-  //     soldier
-  //   );
-  // }
-  //
-  // private handleBackendResponse(soldier: Soldier) {
-  //   return (response: string) => {
-  //     if (response === '409') this.rollback(soldier);
-  //   };
-  // }
-  //
-  // private rollback(soldier: Soldier) {
-  //   delete this.soldiers[soldier.id];
-  //   this.sendSoldiers();
-  //   // TODO: enviar una notificacion que el soldado no se ha podido añadir por algun motivo
-  // }
+  private saveValuesInIndexedDB(soldier: Soldier) {
+    return this.soldierStorage.add(soldier);
+  }
+
+  private sendSoldierToBackend(soldier: Soldier) {
+    return this.fetchDataService.post<string>(
+      environment.SOLDIERS_ENDPOINT,
+      soldier
+    );
+  }
+
+  private handleBackendResponse(soldier: Soldier) {
+    return (response: string) => {
+      if (response === '409') this.rollback(soldier);
+    };
+  }
+
+  private rollback(soldier: Soldier) {
+    delete this.soldiers[soldier.id];
+    this.sendSoldiers();
+    // TODO: enviar una notificacion que el soldado no se ha podido añadir por algun motivo
+  }
 
   public async delete(id: string, onErrorCB: (soldier: Soldier) => void) {
-    //   const soldier2Delete = { ...this.soldiers[id] };
-    //   delete this.soldiers[id];
-    //   this.sendSoldiers();
-    //   await this.deleteFromIndexedDB(id);
-    //   this.deleteFromBackend(id).subscribe(
-    //     this.handleBackendResponseOnDelete(soldier2Delete),
-    //     onErrorCB
-    //   );
+    const soldier2Delete = { ...this.soldiers[id] };
+    delete this.soldiers[id];
+    this.sendSoldiers();
+    await this.deleteFromIndexedDB(id);
+    this.deleteFromBackend(id).subscribe(
+      this.handleBackendResponseOnDelete(soldier2Delete),
+      onErrorCB
+    );
   }
 
-  //
-  // private deleteFromIndexedDB(id: string) {
-  //   return this.soldierStorage.deleteOne(id);
-  // }
-  //
-  // private deleteFromBackend(id: string) {
-  //   return this.fetchDataService.delete<string>(
-  //     environment.SOLDIERS_ENDPOINT + '/' + id
-  //   );
-  // }
-  //
-  // private handleBackendResponseOnDelete(soldier: Soldier) {
-  //   return (response: string) => {
-  //     if (response === '402') this.rollbackOnDelete(soldier);
-  //   };
-  // }
-  //
-  // private rollbackOnDelete(soldier: Soldier) {
-  //   this.soldiers[soldier.id] = soldier;
-  //   this.sendSoldiers();
-  //   // TODO: enviar una notificacion que el soldado no se ha podido añadir por algun motivo
-  // }
+  private deleteFromIndexedDB(id: string) {
+    return this.soldierStorage.deleteOne(id);
+  }
+
+  private deleteFromBackend(id: string) {
+    return this.fetchDataService.delete<string>(
+      environment.SOLDIERS_ENDPOINT + '/' + id
+    );
+  }
+
+  private handleBackendResponseOnDelete(soldier: Soldier) {
+    return (response: string) => {
+      if (response === '402') this.rollbackOnDelete(soldier);
+    };
+  }
+
+  private rollbackOnDelete(soldier: Soldier) {
+    this.soldiers[soldier.id] = soldier;
+    this.sendSoldiers();
+    // TODO: enviar una notificacion que el soldado no se ha podido añadir por algun motivo
+  }
 }

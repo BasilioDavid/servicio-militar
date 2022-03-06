@@ -22,7 +22,7 @@ export class NewSoldierComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  public async submit(values: any) {
+  public submit(values: any) {
     const soldier: Soldier = { ...values, id: uuidv4() };
     const addToCreateQueue = () => {
       this.highAvailabilityService.addToQueue(
@@ -30,7 +30,7 @@ export class NewSoldierComponent implements OnInit {
         soldier
       );
     };
-    await this.soldierRepository.create(soldier, addToCreateQueue);
-    await this.router.navigate(['/soldiers/list']);
+    this.soldierRepository.create(soldier, addToCreateQueue);
+    this.router.navigate(['/soldiers/list']);
   }
 }
