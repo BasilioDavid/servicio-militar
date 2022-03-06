@@ -25,27 +25,21 @@ export class SoldierService {
     return this.soldierRepository.update(soldierEntity.id, soldierEntity);
   }
 
-  public async addMany(soldiers: SoldierEntity[]) {
-    let idsFailed = [];
+  public addMany(soldiers: SoldierEntity[]) {
     for (const soldier of soldiers) {
-      try {
-        await this.new(soldier);
-      } catch (e) {
-        idsFailed = [...idsFailed, soldier.id];
-      }
+      this.new(soldier).catch();
     }
   }
 
-  public async deleteMany(soldiers: string[]) {
-    let idsFailed = [];
+  public deleteMany(soldiers: string[]) {
     for (const soldier of soldiers) {
-      try {
-        await this.delete(soldier);
-      } catch (e) {
-        idsFailed = [...idsFailed, soldier];
-      }
+      this.delete(soldier).catch();
     }
   }
 
-  public editMany(soldiers: SoldierEntity[]) {}
+  public editMany(soldiers: SoldierEntity[]) {
+    for (const soldier of soldiers) {
+      this.update(soldier).catch();
+    }
+  }
 }

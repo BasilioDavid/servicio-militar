@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Res,
 } from '@nestjs/common';
@@ -55,5 +56,12 @@ export class SoldiersController {
   @Delete(':id')
   private delete(@Param('id') id: string, @Res() response: Response) {
     this.soldierService.delete(id).then(() => response.send('201'));
+  }
+
+  @Patch('')
+  private patch(@Body() soldier: SoldierDTO) {
+    const soldierEntity = new SoldierEntity();
+    soldierEntity.fromDTO(soldier);
+    this.soldierService.update(soldierEntity);
   }
 }
