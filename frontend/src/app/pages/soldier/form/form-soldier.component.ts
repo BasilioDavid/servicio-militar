@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Soldier } from '../../../shared/soldier.interface';
+import { Soldier } from '../../../shared/modules/soldier/soldier.interface';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 

@@ -4,7 +4,7 @@ import {
   Component,
   OnInit,
 } from '@angular/core';
-import { SoldierRepository } from '../../../shared/repositories/soldier.repository';
+import { SoldierRepository } from '../../../shared/modules/soldier/soldier.repository';
 import { HighAvailabilityService } from '../../../shared/high-availability.service';
 import { Subscription } from 'rxjs';
 

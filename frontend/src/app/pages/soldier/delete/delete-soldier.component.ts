@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SoldierRepository } from '../../../shared/repositories/soldier.repository';
+import { SoldierRepository } from '../../../shared/modules/soldier/soldier.repository';
 import { HighAvailabilityService } from '../../../shared/high-availability.service';
 import { environment } from '../../../../environments/environment';
-import { Soldier } from '../../../shared/soldier.interface';
+import { Soldier } from '../../../shared/modules/soldier/soldier.interface';
 import { ReplaySubject } from 'rxjs';
 
 @Component({

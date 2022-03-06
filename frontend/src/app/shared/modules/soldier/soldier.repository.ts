@@ -1,14 +1,12 @@
-import { environment } from '../../../environments/environment';
-import { FetchDataService } from '../../common/modules/fetch-data/fetch-data.service';
-import { SoldierStorage } from '../storages/soldier.storage';
-import { Soldier } from '../soldier.interface';
+import { environment } from '../../../../environments/environment';
+import { FetchDataService } from '../../../common/modules/fetch-data/fetch-data.service';
+import { SoldierStorage } from './soldier.storage';
+import { Soldier } from './soldier.interface';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
-import { mapArrayIntoMap } from '../../common/helpers/bdgf.helpers';
+import { mapArrayIntoMap } from '../../../common/helpers/bdgf.helpers';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class SoldierRepository {
   private soldiers!: { [soldierID: string]: Soldier };
 

@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Self } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
 import { Router } from '@angular/router';
-import { SoldierRepository } from '../../../shared/repositories/soldier.repository';
-import { Soldier } from '../../../shared/soldier.interface';
+import { SoldierRepository } from '../../../shared/modules/soldier/soldier.repository';
+import { Soldier } from '../../../shared/modules/soldier/soldier.interface';
 import { HighAvailabilityService } from '../../../shared/high-availability.service';
 import { environment } from '../../../../environments/environment';
 
