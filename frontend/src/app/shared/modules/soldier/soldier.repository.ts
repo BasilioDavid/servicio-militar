@@ -1,10 +1,10 @@
-import { environment } from '../../../../environments/environment';
-import { FetchDataService } from '../../../common/modules/fetch-data/fetch-data.service';
-import { SoldierStorage } from './soldier.storage';
-import { Soldier } from './soldier.interface';
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { mapArrayIntoMap } from '../../../common/helpers/bdgf.helpers';
+import {environment} from '../../../../environments/environment';
+import {FetchDataService} from '../../../common/modules/fetch-data/fetch-data.service';
+import {SoldierStorage} from './soldier.storage';
+import {Soldier} from './soldier.interface';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {mapArrayIntoMap} from '../../../common/helpers/bdgf.helpers';
 
 @Injectable()
 export class SoldierRepository {
@@ -43,7 +43,7 @@ export class SoldierRepository {
   }
 
   private getSoldiersArray() {
-    return Object.values({ ...this.soldiers });
+    return Object.values({...this.soldiers});
   }
 
   private manageBackendValues(soldiers: Soldier[]) {
@@ -58,20 +58,22 @@ export class SoldierRepository {
   }
 
   public async create(soldier: Soldier, onErrorCB: (soldier: Soldier) => void) {
-    this.soldiers[soldier.id] = { ...soldier };
+    this.soldiers[soldier.id] = {...soldier};
     this.sendSoldiers();
     await this.saveValuesInIndexedDB(soldier);
-    this.sendSoldierToBackend(soldier).subscribe(
+    this.sendSoldierToBackendOnCreate(soldier).subscribe(
       this.handleBackendResponse(soldier),
       onErrorCB
     );
   }
 
   private saveValuesInIndexedDB(soldier: Soldier) {
-    return this.soldierStorage.add(soldier);
+    // TODO: tener cuidado con esto, en el caso de que se repita un id de un registro
+    //  se machaca, eso lo quiero para el update, pero para el add puede ser un problema
+    return this.soldierStorage.put(soldier);
   }
 
-  private sendSoldierToBackend(soldier: Soldier) {
+  private sendSoldierToBackendOnCreate(soldier: Soldier) {
     return this.fetchDataService.post<string>(
       environment.SOLDIERS_ENDPOINT,
       soldier
@@ -90,8 +92,8 @@ export class SoldierRepository {
     // TODO: enviar una notificacion que el soldado no se ha podido añadir por algun motivo
   }
 
-  public async delete(id: string, onErrorCB: (soldier: Soldier) => void) {
-    const soldier2Delete = { ...this.soldiers[id] };
+  public async delete(id: string, onErrorCB: () => void) {
+    const soldier2Delete = {...this.soldiers[id]};
     delete this.soldiers[id];
     this.sendSoldiers();
     await this.deleteFromIndexedDB(id);
@@ -121,5 +123,35 @@ export class SoldierRepository {
     this.soldiers[soldier.id] = soldier;
     this.sendSoldiers();
     // TODO: enviar una notificacion que el soldado no se ha podido añadir por algun motivo
+  }
+
+  public async update(soldier: Soldier, onErrorCB: () => void) {
+    const oldSoldier = this.soldiers[soldier.id];
+    this.soldiers[soldier.id] = {...soldier};
+    this.sendSoldiers();
+    await this.saveValuesInIndexedDB(soldier);
+    this.sendSoldierToBackendOnUpdate(soldier).subscribe(
+      this.handleBackendResponseOnUpdate(oldSoldier),
+      onErrorCB
+    );
+  }
+
+  private sendSoldierToBackendOnUpdate(soldier: Soldier) {
+    return this.fetchDataService.patch<string>(
+      environment.SOLDIERS_ENDPOINT,
+      soldier
+    );
+  }
+
+  private handleBackendResponseOnUpdate(oldSoldier: Soldier) {
+    const STATUS_NOT_ACCEPTABLE = '406';
+    return (response: string) => {
+      if (response === STATUS_NOT_ACCEPTABLE) this.rollbackOnUpdate(oldSoldier);
+    };
+  }
+
+  private rollbackOnUpdate(oldSoldier: Soldier) {
+    this.soldiers[oldSoldier.id] = oldSoldier;
+    this.sendSoldiers();
   }
 }

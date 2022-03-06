@@ -1,16 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SoldierRepository } from '../../../shared/modules/soldier/soldier.repository';
-import { ReplaySubject } from 'rxjs';
-import { Soldier } from '../../../shared/modules/soldier/soldier.interface';
 import { HighAvailabilityService } from '../../../shared/high-availability.service';
 import { environment } from '../../../../environments/environment';
+import { Soldier } from '../../../shared/modules/soldier/soldier.interface';
+import { ReplaySubject } from 'rxjs';
 
 @Component({
-  selector: 'app-new-soldiers',
+  selector: 'app-update-soldiers',
   template: ` <app-form-soldiers
     [editable]="true"
     (onSubmit)="this.submit($event)"
+    [data$]="soldier2Delete$"
   ></app-form-soldiers>`,
 })
 export class UpdateSoldierComponent implements OnInit {
@@ -26,7 +27,7 @@ export class UpdateSoldierComponent implements OnInit {
     private readonly router: Router,
     private readonly route: ActivatedRoute
   ) {
-    this.route.paramMap.subscribe(async (data) => {
+    this.route.paramMap.subscribe((data) => {
       const id = data.get('id');
       if (!id) {
         this.router.navigate(['/soldiers']);
@@ -46,13 +47,13 @@ export class UpdateSoldierComponent implements OnInit {
   ngOnInit(): void {}
 
   public submit(soldier: Soldier) {
-    const addToDeleteQueue = () => {
+    const addToUpdateQueue = () => {
       this.highAvailabilityService.addToQueue(
-        environment.QUEUES.DELETE,
+        environment.QUEUES.UPDATE,
         soldier
       );
     };
-    this.soldierRepository.delete(soldier.id, addToDeleteQueue);
+    this.soldierRepository.update(soldier, addToUpdateQueue);
     this.router.navigate(['/soldiers/list']);
   }
 }

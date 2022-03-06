@@ -27,7 +27,7 @@ export class DeleteSoldierComponent implements OnInit {
     private readonly router: Router,
     private readonly route: ActivatedRoute
   ) {
-    this.route.paramMap.subscribe(async (data) => {
+    this.route.paramMap.subscribe((data) => {
       const id = data.get('id');
       if (!id) {
         this.router.navigate(['/soldiers']);

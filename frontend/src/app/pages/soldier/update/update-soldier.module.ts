@@ -18,14 +18,12 @@ import { UpdateQueueStorage } from '../../../shared/storages/queues/update-queue
   declarations: [UpdateSoldierComponent],
   imports: [UpdateSoldierRoutingModule, FormSoldierModule, FetchDataModule],
   providers: [
-    SoldierStorage,
-    SoldierRepository,
     HighAvailabilityService,
-    // QueueRepository,
-    // QueueStorage,
-    // CreateQueueStorage,
-    // DeleteQueueStorage,
-    // UpdateQueueStorage,
+    QueueRepository,
+    QueueStorage,
+    CreateQueueStorage,
+    DeleteQueueStorage,
+    UpdateQueueStorage,
   ],
 })
 export class UpdateSoldierModule {}

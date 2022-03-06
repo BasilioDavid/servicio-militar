@@ -19,8 +19,6 @@ import { ActivatedRoute } from '@angular/router';
   declarations: [DeleteSoldierComponent],
   imports: [DeleteSoldierRoutingModule, FormSoldierModule, FetchDataModule],
   providers: [
-    SoldierStorage,
-    SoldierRepository,
     HighAvailabilityService,
     //queue
     QueueRepository,
