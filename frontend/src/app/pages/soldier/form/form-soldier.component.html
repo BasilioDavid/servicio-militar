@@ -1,9 +1,13 @@
 <form [formGroup]="form">
   <label for="name">Nombre</label>
-  <input type="text" id="name" [contentEditable]="editable" formControlName="name">
+  <input type="text" id="name" formControlName="name"
+         [value]="(data$ | async)?.name" [readOnly]="!this.editable"
+  >
   <label for="surname">Apellidos</label>
-  <input type="text" id="surname" [contentEditable]="editable" formControlName="surname">
+  <input type="text" id="surname" formControlName="surname"
+         [value]="(data$ | async)?.surname" [readOnly]="!this.editable">
   <label for="atGraduation">Fecha de graduacion</label>
-  <input type="text" id="atGraduation" [contentEditable]="editable" formControlName="atGraduation">
+  <input type="text" id="atGraduation" formControlName="atGraduation"
+         [value]="(data$ | async)?.atGraduation" [readOnly]="!this.editable">
   <button (click)="submit()">Enviar</button>
 </form>

@@ -13,6 +13,7 @@ import { QueueStorage } from '../../../shared/storages/queues/queue.storage';
 import { CreateQueueStorage } from '../../../shared/storages/queues/create-queue.storage';
 import { DeleteQueueStorage } from '../../../shared/storages/queues/delete-queue.storage';
 import { UpdateQueueStorage } from '../../../shared/storages/queues/update-queue.storage';
+import { ActivatedRoute } from '@angular/router';
 
 @NgModule({
   declarations: [DeleteSoldierComponent],
@@ -21,11 +22,12 @@ import { UpdateQueueStorage } from '../../../shared/storages/queues/update-queue
     SoldierStorage,
     SoldierRepository,
     HighAvailabilityService,
-    // QueueRepository,
-    // QueueStorage,
-    // CreateQueueStorage,
-    // DeleteQueueStorage,
-    // UpdateQueueStorage,
+    //queue
+    QueueRepository,
+    QueueStorage,
+    CreateQueueStorage,
+    DeleteQueueStorage,
+    UpdateQueueStorage,
   ],
 })
 export class DeleteSoldierModule {}

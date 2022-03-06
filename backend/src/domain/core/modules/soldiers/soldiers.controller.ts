@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Res,
+} from '@nestjs/common';
+import { Response } from 'express';
 import { SoldierService } from '../../../shared/providers/soldier/soldier.service';
 import { SoldierDTO } from '../../../shared/models/DTOs/soldier.dto';
 import { SoldierEntity } from '../../../shared/entities/soldier.entity';
@@ -41,5 +50,10 @@ export class SoldiersController {
     for (const { id } of soldiers['delete']) {
       soldiers2Delete = [...soldiers2Delete, id];
     }
+  }
+
+  @Delete(':id')
+  private delete(@Param('id') id: string, @Res() response: Response) {
+    this.soldierService.delete(id).then(() => response.send('201'));
   }
 }

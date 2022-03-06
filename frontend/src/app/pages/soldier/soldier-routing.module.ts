@@ -13,14 +13,14 @@ const routes: Routes = [
       import('./new/new-soldier.module').then((m) => m.NewSoldierModule),
   },
   {
-    path: 'update',
+    path: 'update/:id',
     loadChildren: () =>
       import('./update/update-soldier.module').then(
         (m) => m.UpdateSoldierModule
       ),
   },
   {
-    path: 'delete',
+    path: 'delete/:id',
     loadChildren: () =>
       import('./delete/delete-soldier.module').then(
         (m) => m.DeleteSoldierModule
