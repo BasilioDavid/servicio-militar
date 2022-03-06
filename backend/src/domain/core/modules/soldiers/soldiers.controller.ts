@@ -12,6 +12,7 @@ import { Response } from 'express';
 import { SoldierService } from '../../../shared/providers/soldier/soldier.service';
 import { SoldierDTO } from '../../../shared/models/DTOs/soldier.dto';
 import { SoldierEntity } from '../../../shared/entities/soldier.entity';
+import { SoldierWithQueueDto } from '../../../shared/models/DTOs/soldier-with-queue.dto';
 
 @Controller('soldiers')
 export class SoldiersController {
@@ -27,30 +28,43 @@ export class SoldiersController {
   @Post('')
   // esto tiene que ser soldiers dto
   private create(@Body() soldier: SoldierDTO): Promise<SoldierEntity> {
-    const soldierEntity = new SoldierEntity();
-    soldierEntity.fromDTO(soldier);
+    const soldierEntity = SoldierEntity.fromDTO(soldier);
     return this.soldierService.new(soldierEntity);
   }
 
   @Post('mass')
-  private mass(@Body() soldiers: { [queue: string]: SoldierDTO[] }) {
-    // cambiar ese string a pelocho a un environ
-    let soldiers2Create: SoldierEntity[] = [];
-    for (const soldier of soldiers['create']) {
-      const soldierEntity = new SoldierEntity();
-      soldierEntity.fromDTO(soldier);
-      soldiers2Create = [...soldiers2Create, soldierEntity];
-    }
-    let soldiers2Update: SoldierEntity[] = [];
-    for (const soldier of soldiers['update']) {
-      const soldierEntity = new SoldierEntity();
-      soldierEntity.fromDTO(soldier);
-      soldiers2Update = [...soldiers2Update, soldierEntity];
-    }
-    let soldiers2Delete: string[] = [];
-    for (const { id } of soldiers['delete']) {
-      soldiers2Delete = [...soldiers2Delete, id];
-    }
+  private async mass(@Body() soldiers: SoldierWithQueueDto[]) {
+    console.log('Data arrived: ', soldiers);
+    const soldiersTo = this.getSoldiersSeparatedByQueue(soldiers);
+    console.log('Data proccessed: ', soldiersTo);
+    // quick solution
+    await this.soldierService.addMany(soldiersTo.create);
+    await this.soldierService.editMany(soldiersTo.update);
+    await this.soldierService.deleteMany(soldiersTo.delete);
+  }
+
+  private getSoldiersSeparatedByQueue(soldiers: SoldierWithQueueDto[]) {
+    return soldiers.reduce(
+      (
+        soldiersSeparatedByQueue: {
+          create: SoldierEntity[];
+          update: SoldierEntity[];
+          delete: SoldierEntity[];
+        },
+        soldier,
+      ) => ({
+        ...soldiersSeparatedByQueue,
+        [soldier.queue]: [
+          ...soldiersSeparatedByQueue[soldier.queue],
+          SoldierEntity.fromDTO({ ...soldier }),
+        ],
+      }),
+      {
+        create: [],
+        update: [],
+        delete: [],
+      },
+    );
   }
 
   @Delete(':id')
@@ -60,8 +74,7 @@ export class SoldiersController {
 
   @Patch('')
   private patch(@Body() soldier: SoldierDTO) {
-    const soldierEntity = new SoldierEntity();
-    soldierEntity.fromDTO(soldier);
+    const soldierEntity = SoldierEntity.fromDTO(soldier);
     this.soldierService.update(soldierEntity);
   }
 }

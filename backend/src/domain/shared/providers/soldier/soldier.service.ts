@@ -25,21 +25,33 @@ export class SoldierService {
     return this.soldierRepository.update(soldierEntity.id, soldierEntity);
   }
 
-  public addMany(soldiers: SoldierEntity[]) {
+  public async addMany(soldiers: SoldierEntity[]) {
     for (const soldier of soldiers) {
-      this.new(soldier).catch();
+      try {
+        await this.new(soldier);
+      } catch (e) {
+        console.log('Error adding: ', e);
+      }
     }
   }
 
-  public deleteMany(soldiers: string[]) {
+  public async deleteMany(soldiers: SoldierEntity[]) {
     for (const soldier of soldiers) {
-      this.delete(soldier).catch();
+      try {
+        await this.delete(soldier.id).catch();
+      } catch (e) {
+        console.log('Error adding: ', e);
+      }
     }
   }
 
-  public editMany(soldiers: SoldierEntity[]) {
+  public async editMany(soldiers: SoldierEntity[]) {
     for (const soldier of soldiers) {
-      this.update(soldier).catch();
+      try {
+        await this.update(soldier).catch();
+      } catch (e) {
+        console.log('Error adding: ', e);
+      }
     }
   }
 }

@@ -5,7 +5,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { SoldierRepository } from '../../../shared/modules/soldier/soldier.repository';
-import { HighAvailabilityService } from '../../../shared/high-availability.service';
+import { HighAvailabilityService } from '../../../shared/modules/high-availability/high-availability.service';
 
 @Component({
   selector: 'app-list-soldiers',
@@ -21,11 +21,7 @@ export class ListSoldierComponent implements OnInit, AfterContentChecked {
     private cdref: ChangeDetectorRef
   ) {}
 
-  ngOnInit() {
-    this.highAvailabilityService.setOnBackedRefreshCallback(() => {
-      this.refresh();
-    });
-  }
+  ngOnInit() {}
 
   ngAfterContentChecked(): void {
     this.cdref.detectChanges();
